@@ -27,18 +27,23 @@ const mocks = {
 };
 */
 
-const server = new ApolloServer({ 
-  typeDefs,
-  resolvers,
-  dataSources: () => ({ 
-    trackAPI: new TrackAPI()
-  })
-})
+async function startApolloServer(typeDefs, resolvers) {
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    dataSources: () => {
+      return {
+        trackAPI: new TrackAPI(),
+      };
+    },
+  });
 
-server.listen().then(({url}) => {
+  const { url,port } = await server.listen();
   console.log(`
-    🚀 Server is running!😎
-    🔉 Listening on ${url}
-    📭 Query at https://studio.apollographql.com/dev
-  `);
-})
+      🚀 Server is running!😎
+      🔉 Listening on port ${port}
+      📭 Query at ${url}
+    `);
+}
+
+startApolloServer(typeDefs, resolvers);
